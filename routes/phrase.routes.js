@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 const Phrase = require("../models/Phrase.model");
 
 //  POST /api/phrases  -  Creates a new phrase
-router.post("/phrases", (req, res, next) => {
-  const { engPhrase, selectedLang } = req.body;
+router.post("/phrases", isAuthenticated, (req, res, next) => {
+  const { engPhrase, selectedLang, languageCode } = req.body;
 
-  Phrase.create({ engPhrase, selectedLang })
+  Phrase.create({ engPhrase, selectedLang, languageCode })
     .then((response) => res.json(response))
     .catch((err) => res.json(err));
 });
@@ -16,7 +17,6 @@ router.post("/phrases", (req, res, next) => {
 // //  GET /api/phrases -  Retrieves all of the phrases
 router.get("/phrases", (req, res, next) => {
   Phrase.find()
-    // .populate("tasks")
     .then((allPhrases) => res.json(allPhrases))
     .catch((err) => res.json(err));
 });
@@ -31,13 +31,22 @@ router.get("/phrases/:phraseId", (req, res, next) => {
   }
 
   Phrase.findById(phraseId)
-    // .populate("tasks")
     .then((phrase) => res.status(200).json(phrase))
     .catch((error) => res.json(error));
 });
 
+//  GET /api/phrases/:phraseId -  Retrieves a specific phrase by id
+router.get("/phrases/code/:languageCode", (req, res, next) => {
+  const { languageCode } = req.params;
+
+  Phrase.find({languageCode})
+    .then((phrasesArray) => res.status(200).json({phrasesArray}))
+    .catch((error) => res.json(error));
+});
+
+
 // PUT  /api/phrases/:phraseId  -  Updates a specific phrase by id
-router.put("/phrases/:phraseId", (req, res, next) => {
+router.put("/phrases/:phraseId", isAuthenticated, (req, res, next) => {
   const { phraseId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(phraseId)) {
@@ -51,7 +60,7 @@ router.put("/phrases/:phraseId", (req, res, next) => {
 });
 
 // DELETE  /api/phrases/:phraseId  -  Deletes a specific phrase by id
-router.delete("/phrases/:phraseId", (req, res, next) => {
+router.delete("/phrases/:phraseId", isAuthenticated, (req, res, next) => {
   const { phraseId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(phraseId)) {

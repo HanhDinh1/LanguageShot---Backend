@@ -14,7 +14,7 @@ const allRoutes = require("./routes");
 app.use("/api", allRoutes);
 
 const phraseRouter = require("./routes/phrase.routes");
-app.use("/api", isAuthenticated, phraseRouter);
+app.use("/api", phraseRouter);
 
 const authRouter = require("./routes/auth.routes");
 app.use("/auth", authRouter);
