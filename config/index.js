@@ -22,7 +22,8 @@ module.exports = (app) => {
   app.use(
     cors({
       credentials: true,
-      origin: '*',
+      // origin: '*',
+      origin: process.env.ORIGIN,
     })
   );
 
