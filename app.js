@@ -8,7 +8,7 @@ const { isAuthenticated } = require("./middleware/jwt.middleware");
 const app = express();
 require("./config")(app);
 
-app.use( cors({ origin: ["http://localhost:3000", process.env.ORIGIN] }) );
+// app.use( cors({ origin: ["http://localhost:3000", process.env.ORIGIN] }) );
 
 
 // 👇 Start handling routes here
